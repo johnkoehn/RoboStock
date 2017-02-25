@@ -20,18 +20,22 @@ public class Bot
 	//performance
 	private int fitnessLevel;
 	private float averageReturn;
-	private ArrayList<Double> netWorth;
+	private float netWorth;
+	private float winsToLoses; //low
+	private float avgWorth; //low
 	
 	//trading
 	private ArrayList<Buy> buys;
 	
 	//other
 	private boolean done = false;
+	private ArrayList<Float> dailyWorth;
 	
 	public Bot()
 	{
 		buys = new ArrayList<Buy>();
 	}
+	
 	
 	public void init()
 	{
@@ -243,11 +247,6 @@ public class Bot
 			return min;
 		else
 			return newValue;
-	}
-	
-	public ArrayList<Double> getNetWorth()
-	{
-		return netWorth;
 	}
 	
 	public void setDone()
