@@ -41,14 +41,14 @@ public class BotSettings
 	
 	public static double startingCash;
 	
-	public BotSettings(String filename)
+	public static void init(String filename)
 	{
 		//read in file to memory
 		File file = new File(filename);
 		try
 		{
 			Scanner scanner = new Scanner(file);
-			scanner.useDelimiter(",");
+			//scanner.useDelimiter(",");
 			
 			//bad programming alert... assume file good :)
 			minMomentum = scanner.nextFloat();
