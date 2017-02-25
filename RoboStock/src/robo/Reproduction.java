@@ -11,7 +11,7 @@ public class Reproduction
 	private double remainderRatio;
 	private int eliteNumber;
 	private int fitnessScaleTo;
-
+	private Random r;
 	/**
 	 * 
 	 * @param bots
@@ -27,14 +27,19 @@ public class Reproduction
 	 * @param fitnessScaleTo:
 	 *            the maximum scaled value used for Remainder selection
 	 */
-	public Reproduction(ArrayList<Bot> bots, double crossoverRatio, double remainderRatio, int eliteNumber,
-			int fitnessScaleTo)
+	public Reproduction(ArrayList<Bot> bot, double crossoverRatio, double remainderRatio, int eliteNumber,
+			int fitnessScaleTo, Random r)
 	{
-		this.bots = bots;
+		bots=new ArrayList<Bot>();
+		for (int i = 0; i < bot.size(); i++)
+		{
+			this.bots.add(bot.get(i));
+		}
 		this.crossoverRatio = crossoverRatio;
 		this.remainderRatio = remainderRatio;
 		this.eliteNumber = eliteNumber;
 		this.fitnessScaleTo = fitnessScaleTo;
+		this.r=r;
 	}
 
 	public ArrayList<Bot> run()
@@ -130,7 +135,6 @@ public class Reproduction
 		}
 
 		// categorize crossovers
-		Random r=new Random();
 		int numCrossOvers = (int) (crossoverRatio * parents.size());
 		if(numCrossOvers%2==1)
 			numCrossOvers-=1;
@@ -159,9 +163,7 @@ public class Reproduction
 	{
 		if(crossovers.size()%2==1)
 			throw new InvalidParameterException("Odd number of crossovers");
-		int index=0;
 		Bot parent1,parent2,child;
-		Random r=new Random();
 		while(crossovers.size()>0)
 		{
 			parent1=crossovers.remove(r.nextInt(crossovers.size()));
@@ -199,6 +201,7 @@ public class Reproduction
 				child.setTrailingPrice(parent1.getTrailingPrice());
 			else
 				child.setTrailingPrice(parent2.getTrailingPrice());
+			children.add(child);
 		}
 	}
 
