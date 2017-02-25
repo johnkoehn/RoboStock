@@ -22,19 +22,22 @@ public class Bot
 	private float averageReturn;
 	private ArrayList<Double> netWorth;
 	
+	//trading
+	ArrayList<Float> momentumAvgs;
+	
 	//other
 	private boolean done = false;
 	
 	public Bot()
 	{
-		
+		momentumAvgs = new ArrayList<Float>();
 	}
 	
 	public void init()
 	{
 		//used for a fist generation bot :D
 		//Here we go!
-		momentum = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minMomentum * 100), (int)(BotSettings.maxMomuntum*100 + 1))/100.0);
+		momentum = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minMomentum * 100), (int)(BotSettings.maxMomentum*100 + 1))/100.0);
 		sellPrice = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minSellPrice * 100), (int)(BotSettings.maxSellPrice*100 + 1))/100.0);
 		trailingPrice = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minTrailingPrice * 100),(int)((BotSettings.maxTrailingPrice*100 + 1)))/100.0);
 		maximumLoss = (float)(ThreadLocalRandom.current().nextInt((int)(BotSettings.minMaximumLoss * 100), (int)(BotSettings.maxMaximumLoss*100 + 1))/100.0);
@@ -143,9 +146,103 @@ public class Bot
 		return averageReturn;
 	}
 	
-	public Bot mutuate()
+	public Bot mutuate(Random r)
 	{
-		return new Bot();
+		//create a bot with new genes
+		Bot bot = new Bot();
+		
+		//momentum
+		if(r.nextBoolean())
+		{
+			float modifier = (float) (ThreadLocalRandom.current().nextInt(-(int)(BotSettings.momentumMutation * 100), (int)(BotSettings.momentumMutation*100 + 1))/100.0);
+			bot.setMomentum(calcMutation(modifier, momentum, BotSettings.minMomentum, BotSettings.maxMomentum));
+		}
+		else
+			bot.setMomentum(momentum);
+		
+		if(r.nextBoolean())
+		{
+			float modifier = (float) (ThreadLocalRandom.current().nextInt(-(int)BotSettings.sellPriceMutation, (int)(BotSettings.sellPriceMutation + 1))/100.0);
+			bot.setSellPrice((calcMutation(modifier, sellPrice, BotSettings.minSellPrice, BotSettings.maxSellPrice)));
+		}
+		else
+			bot.setSellPrice(sellPrice);
+		
+		if(r.nextBoolean())
+		{
+			float modifier = (float) (ThreadLocalRandom.current().nextInt(-(int)(BotSettings.trailingPriceMutation * 100),(int)((BotSettings.trailingPriceMutation*100 + 1)))/100.0);
+			bot.setTrailingPrice(calcMutation(modifier, trailingPrice, BotSettings.minTrailingPrice, BotSettings.maxTrailingPrice));
+		}
+		else
+			bot.setTrailingPrice(trailingPrice);
+		
+		if(r.nextBoolean())
+		{
+			float modifier = (float)(ThreadLocalRandom.current().nextInt(-(int)(BotSettings.maximumLossMutation * 100), (int)(BotSettings.maximumLossMutation*100 + 1))/100.0);
+			bot.setMaximumLoss(calcMutation(modifier, maximumLoss, BotSettings.minMaximumLoss, BotSettings.maxMaximumLoss));
+		}
+		else
+			bot.setMaximumLoss(maximumLoss);
+		
+		if(r.nextBoolean())
+		{
+			int modifier = ThreadLocalRandom.current().nextInt(-BotSettings.percentCashOnHandMutation, BotSettings.percentCashOnHandMutation + 1);
+			bot.setPercentCashOnHand(calcMutation(modifier, percentCashOnHand, BotSettings.minPercentCashOnHand, BotSettings.maxPercentCashOnHand));
+		}
+		else
+			bot.setPercentCashOnHand(percentCashOnHand);
+		
+		if(r.nextBoolean())
+		{
+			int modifier = ThreadLocalRandom.current().nextInt(-BotSettings.timeLimitMutation, BotSettings.timeLimitMutation + 1);
+			bot.setTimeLimit(calcMutation(modifier, timeLimit, BotSettings.minTimeLimit, BotSettings.maxTimeLimit));
+		}
+		else
+			bot.setTimeLimit(timeLimit);
+		
+		if(r.nextBoolean())
+		{
+			int modifier = ThreadLocalRandom.current().nextInt(-BotSettings.movingAverageMutation, BotSettings.movingAverageMutation);
+			bot.setMovingAverage(calcMutation(modifier, movingAverage, BotSettings.minMovingAverage, BotSettings.maxMovingAverage));
+		}
+		else
+			bot.setMovingAverage(movingAverage);
+			
+		//fucked up case
+		float modifier = 0;
+		if(r.nextBoolean())
+			modifier = ThreadLocalRandom.current().nextInt(-(int)BotSettings.purchaseLotMutation, (int)BotSettings.purchaseLotMutation + 1);
+		int newPurchaseLot = purchaseLot + (int)modifier;	
+		if(newPurchaseLot > BotSettings.maxPurchaseLot)
+			bot.setPurchaseLot((int)BotSettings.maxPurchaseLot);
+		else if(newPurchaseLot < BotSettings.minPurchaseLot)
+			bot.setPurchaseLot((int)BotSettings.minPurchaseLot);
+		else
+			bot.setPurchaseLot(newPurchaseLot);
+		
+		return bot;
+	}
+	
+	private float calcMutation(float modifier, float currentValue, float min, float max)
+	{
+		float newValue = modifier + currentValue;
+		if(newValue > max)
+			return max;
+		else if(newValue < min)
+			return min;
+		else
+			return newValue;
+	}
+	
+	private int calcMutation(int modifier, int currentValue, int min, int max)
+	{
+		int newValue = modifier + currentValue;
+		if(newValue > max)
+			return max;
+		else if(newValue < min)
+			return min;
+		else
+			return newValue;
 	}
 	
 	public ArrayList<Double> getNetWorth()
