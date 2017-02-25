@@ -1,6 +1,8 @@
 package robo;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Reproduction
 {
@@ -90,12 +92,13 @@ public class Reproduction
 		int index = 0;
 		for (int i = 0; i < numOfStochasticParents; i++)
 		{
-			if (stochasticVals.get(index) < remainsInJump)// jumped over the end of this bot's range
+			if (stochasticVals.get(index) < remainsInJump)// jumped over the end
+															// of this bot's
+															// range
 			{
 				remainsInJump = jumpValue - stochasticVals.get(index);
 				index++;
-			} 
-			else// landed in the range of the bot at index's range
+			} else// landed in the range of the bot at index's range
 			{
 				parents.add(bots.get(index));
 				remainsInJump = jumpValue;
@@ -107,21 +110,103 @@ public class Reproduction
 	private void categorizeParents(ArrayList<Bot> parents, ArrayList<Bot> mutators, ArrayList<Bot> crossovers,
 			ArrayList<Bot> elites)
 	{
+		// categorize elites
+		Bot tempMax;
+		int tempIndex;
+		for (int i = 0; i < eliteNumber; i++)
+		{
+			tempMax = parents.get(0);
+			tempIndex = 0;
+			for (int j = 1; j < parents.size(); j++)
+			{
+				if (parents.get(j).getFitness() > tempMax.getFitness())
+				{
+					tempMax = parents.get(j);
+					tempIndex = j;
+				}
+			}
+			elites.add(tempMax);
+			parents.remove(tempIndex);
+		}
 
+		// categorize crossovers
+		Random r=new Random();
+		int numCrossOvers = (int) (crossoverRatio * parents.size());
+		if(numCrossOvers%2==1)
+			numCrossOvers-=1;
+		for (int i = 0; i < numCrossOvers; i++)
+		{
+			crossovers.add(parents.remove(r.nextInt(parents.size())));
+		}
+		
+		//remaining are categorized as mutators
+		while(parents.size()>0)
+		{
+			mutators.add(parents.remove(0));
+		}
 	}
 
 	private void elitify(ArrayList<Bot> elites, ArrayList<Bot> children)
 	{
-
+		//all elites survive on another generation
+		while(elites.size()>0)
+		{
+			children.add(elites.remove(0));
+		}
 	}
 
 	private void crossover(ArrayList<Bot> crossovers, ArrayList<Bot> children)
 	{
-
+		if(crossovers.size()%2==1)
+			throw new InvalidParameterException("Odd number of crossovers");
+		int index=0;
+		Bot parent1,parent2,child;
+		Random r=new Random();
+		while(crossovers.size()>0)
+		{
+			parent1=crossovers.remove(r.nextInt(crossovers.size()));
+			parent2=crossovers.remove(r.nextInt(crossovers.size()));
+			child=new Bot();
+			if(r.nextBoolean())
+				child.setMaximumLoss(parent1.getMaximumLoss());
+			else
+				child.setMaximumLoss(parent2.getMaximumLoss());
+			if(r.nextBoolean())
+				child.setMomentum(parent1.getMomentum());
+			else
+				child.setMomentum(parent2.getMomentum());
+			if(r.nextBoolean())
+				child.setMovingAverage(parent1.getMovingAverage());
+			else
+				child.setMovingAverage(parent2.getMovingAverage());
+			if(r.nextBoolean())
+				child.setPercentCashOnHand(parent1.getPercentCashOnHand());
+			else
+				child.setPercentCashOnHand(parent2.getPercentCashOnHand());
+			if(r.nextBoolean())
+				child.setPurchaseLot(parent1.getPurchaseLot());
+			else
+				child.setPurchaseLot(parent2.getPurchaseLot());
+			if(r.nextBoolean())
+				child.setSellPrice(parent1.getSellPrice());
+			else
+				child.setSellPrice(parent2.getSellPrice());
+			if(r.nextBoolean())
+				child.setTimeLimit(parent1.getTimeLimit());
+			else
+				child.setTimeLimit(parent2.getTimeLimit());
+			if(r.nextBoolean())
+				child.setTrailingPrice(parent1.getTrailingPrice());
+			else
+				child.setTrailingPrice(parent2.getTrailingPrice());
+		}
 	}
 
 	private void mutate(ArrayList<Bot> mutators, ArrayList<Bot> children)
 	{
-
+		while(mutators.size()>0)
+		{
+			children.add(mutators.remove(0).mutuate());
+		}
 	}
 }
