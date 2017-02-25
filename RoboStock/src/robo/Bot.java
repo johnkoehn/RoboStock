@@ -5,14 +5,19 @@ import java.util.Random;
 public class Bot
 {
 	private float momentum;
-	private float purchaseLot;
+	private int purchaseLot;
 	private float movingAverage;
 	private float sellPrice;
 	private float trailingPrice;
 	private int timeLimit;
 	private float maximumLoss;
-	private float percentCashOnHand;
+	private int percentCashOnHand;
+	
+	private double cash;
+	
+	//performance
 	private int fitnessLevel;
+	private float averageReturn;
 	
 	public Bot()
 	{
@@ -34,12 +39,12 @@ public class Bot
 		this.momentum = momentum;
 	}
 
-	public float getPurchaseLot()
+	public int getPurchaseLot()
 	{
 		return purchaseLot;
 	}
 
-	public void setPurchaseLot(float purchaseLot)
+	public void setPurchaseLot(int purchaseLot)
 	{
 		this.purchaseLot = purchaseLot;
 	}
@@ -94,12 +99,12 @@ public class Bot
 		this.maximumLoss = maximumLoss;
 	}
 
-	public float getPercentCashOnHand()
+	public int getPercentCashOnHand()
 	{
 		return percentCashOnHand;
 	}
 
-	public void setPercentCashOnHand(float percentCashOnHand)
+	public void setPercentCashOnHand(int percentCashOnHand)
 	{
 		this.percentCashOnHand = percentCashOnHand;
 	}
@@ -107,5 +112,15 @@ public class Bot
 	public int getFitness()
 	{
 		return fitnessLevel;
+	}
+	
+	public double getCash()
+	{
+		return cash;
+	}
+	
+	public float getAverageReturn()
+	{
+		return averageReturn;
 	}
 }

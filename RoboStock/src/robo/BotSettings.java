@@ -1,6 +1,8 @@
 package robo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 /**
  * Gets the settings for each Bot
@@ -14,28 +16,28 @@ public class BotSettings
 	public float maxMomuntum;
 	public float minPurchaseLot;
 	public float maxPurchaseLot;
-	public float minMovingAverage;
-	public float maxMovingAverage;
 	public float minSellPrice;
 	public float maxSellPrice;
 	public float minTrailingPrice;
 	public float maxTrailingPrice;
 	public float minMaximumLoss;
 	public float maxMaximumLoss;
-	public float minPercentCashOnHand;
-	public float maxPercentCashOnHand;
+	public int minPercentCashOnHand;
+	public int maxPercentCashOnHand;
 	public int minTimeLimit;
 	public int maxTimeLimit;
+	public int minMovingAverage; //number of days to count in moving average
+	public int maxMovingAverage;
 	
 	//mutations + & -
 	public float momentumMutation;
 	public float purchaseLotMutation;
-	public float movingAverageMutation;
 	public float sellPriceMutation;
 	public float trailingPriceMutation;
 	public float maximumLossMutation;
 	public float percentCashOnHandMutation;
 	public int timeLimitMutation;
+	public int movingAverageMutation;
 	
 	public double startingCash;
 	
@@ -43,6 +45,18 @@ public class BotSettings
 	{
 		//read in file to memory
 		File file = new File(filename);
+		try
+		{
+			Scanner scanner = new Scanner(file);
+			
+			
+			
+			scanner.close();
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
