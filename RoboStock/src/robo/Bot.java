@@ -23,14 +23,14 @@ public class Bot
 	private ArrayList<Double> netWorth;
 	
 	//trading
-	ArrayList<Float> momentumAvgs;
+	private ArrayList<Buy> buys;
 	
 	//other
 	private boolean done = false;
 	
 	public Bot()
 	{
-		momentumAvgs = new ArrayList<Float>();
+		buys = new ArrayList<Buy>();
 	}
 	
 	public void init()
