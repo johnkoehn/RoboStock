@@ -14,18 +14,16 @@ import org.apache.commons.csv.CSVRecord;
 public class Data
 {
 	final static int TOTALDAYS = 2518;
-	ArrayList<ArrayList<Day>> companies;
-	ArrayList<Day> dayNum;
+	static ArrayList<ArrayList<Day>> companies = new ArrayList<ArrayList<Day>>();
+	private static ArrayList<Day> dayNum;
+	
 
-	Data()
-	{
-		ArrayList<Day> dayNum = new ArrayList<Day>();
 
-	}
 
-	public void accessData(String filename) throws IOException
+	public static void parseData(String filename) throws IOException
 	{
 		Reader in;
+		dayNum = new ArrayList<Day>();
 		try
 		{
 			in = new FileReader(filename);
@@ -34,9 +32,12 @@ public class Data
 			
 			for (CSVRecord record : records) {
 				
-			    String columnOne = record.get(0);
-			    System.out.println(columnOne);
+			    String close = record.get(1);
+			    String open = record.get(3);
+			    Day today = new Day(Float.parseFloat(open),Float.parseFloat(close));
+			    dayNum.add(0, today);
 			}
+			companies.add(dayNum);
 		}
 		catch(FileNotFoundException e)
 		{
@@ -44,6 +45,24 @@ public class Data
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static Day getDay(int company, int dayNumber)
+	{
+		
+		return companies.get(company).get(dayNumber);
+	}
+	
+	public static ArrayList<Day> getAllDataForDay(int dayNumber)
+	{
+		ArrayList<Day> values = new ArrayList<Day>();
+		for(int i = 0; i < companies.size(); i++)
+		{
+			values.add(companies.get(i).get(dayNumber));
+		}
+		
+		
+		return values;
 	}
 
 }

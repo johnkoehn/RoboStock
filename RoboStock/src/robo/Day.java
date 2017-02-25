@@ -19,4 +19,9 @@ public class Day
 	{
 		return close;
 	}
+	
+	public String toString()
+	{
+		return Float.toString(open) + " : " + Float.toString(close);
+	}
 }
