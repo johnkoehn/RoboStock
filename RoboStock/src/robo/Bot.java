@@ -123,4 +123,9 @@ public class Bot
 	{
 		return averageReturn;
 	}
+	
+	public Bot mutuate()
+	{
+		return new Bot();
+	}
 }
