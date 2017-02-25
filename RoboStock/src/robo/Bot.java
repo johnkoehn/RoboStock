@@ -1,17 +1,19 @@
 package robo;
 
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Bot
 {
 	private float momentum;
-	private int purchaseLot;
-	private float movingAverage;
 	private float sellPrice;
 	private float trailingPrice;
-	private int timeLimit;
 	private float maximumLoss;
 	private int percentCashOnHand;
+	private int purchaseLot;
+	private int timeLimit;
+	private int movingAverage;
 	
 	private double cash;
 	
@@ -19,14 +21,23 @@ public class Bot
 	private int fitnessLevel;
 	private float averageReturn;
 	
+	private ArrayList<Double> netWorth;
+	
 	public Bot()
 	{
 		
 	}
 	
-	public void init(Random random)
+	public void init()
 	{
+		//used for a fist generation bot :D
+		//Here we go!
+		momentum = (float) (ThreadLocalRandom.current().nextInt((int)BotSettings.minMomentum * 100, (int)BotSettings.maxMomuntum*100 + 1)/100);
 		
+		
+		percentCashOnHand = ThreadLocalRandom.current().nextInt(BotSettings.minPercentCashOnHand, BotSettings.maxPercentCashOnHand + 1);
+		purchaseLot = ThreadLocalRandom.current().nextInt((int)BotSettings.minPurchaseLot, (int)BotSettings.maxPurchaseLot + 1);
+		movingAverage = ThreadLocalRandom.current().nextInt(BotSettings.minMovingAverage, BotSettings.maxMovingAverage + 1);
 	}
 
 	public float getMomentum()
@@ -49,12 +60,12 @@ public class Bot
 		this.purchaseLot = purchaseLot;
 	}
 
-	public float getMovingAverage()
+	public int getMovingAverage()
 	{
 		return movingAverage;
 	}
 
-	public void setMovingAverage(float movingAverage)
+	public void setMovingAverage(int movingAverage)
 	{
 		this.movingAverage = movingAverage;
 	}
@@ -127,5 +138,10 @@ public class Bot
 	public Bot mutuate()
 	{
 		return new Bot();
+	}
+	
+	public ArrayList<Double> getNetWorth()
+	{
+		return netWorth;
 	}
 }
