@@ -18,7 +18,7 @@ public class Bot
 	private double cash;
 	
 	//performance
-	private int fitnessLevel;
+	public int fitnessLevel;
 	private float averageReturn;
 	private float netWorth;
 	private float winsToLoses; //low
