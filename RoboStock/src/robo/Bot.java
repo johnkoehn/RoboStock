@@ -34,10 +34,10 @@ public class Bot
 	{
 		//used for a fist generation bot :D
 		//Here we go!
-		momentum = (float) (ThreadLocalRandom.current().nextInt((int)BotSettings.minMomentum * 100, (int)BotSettings.maxMomuntum*100 + 1)/100);
-		sellPrice = (float) (ThreadLocalRandom.current().nextInt((int)BotSettings.minSellPrice * 100, (int)BotSettings.maxSellPrice*100 + 1)/100);
-		trailingPrice = (float) (ThreadLocalRandom.current().nextInt((int)BotSettings.minTrailingPrice * 100, (int)BotSettings.maxTrailingPrice*100 + 1)/100);
-		maximumLoss = (float)(ThreadLocalRandom.current().nextInt((int)BotSettings.minMaximumLoss * 100, (int)BotSettings.maxMaximumLoss*100 + 1)/100);
+		momentum = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minMomentum * 100), (int)(BotSettings.maxMomuntum*100 + 1))/100.0);
+		sellPrice = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minSellPrice * 100), (int)(BotSettings.maxSellPrice*100 + 1))/100.0);
+		trailingPrice = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minTrailingPrice * 100),(int)((BotSettings.maxTrailingPrice*100 + 1)))/100.0);
+		maximumLoss = (float)(ThreadLocalRandom.current().nextInt((int)(BotSettings.minMaximumLoss * 100), (int)(BotSettings.maxMaximumLoss*100 + 1))/100.0);
 				
 		percentCashOnHand = ThreadLocalRandom.current().nextInt(BotSettings.minPercentCashOnHand, BotSettings.maxPercentCashOnHand + 1);
 		timeLimit = ThreadLocalRandom.current().nextInt(BotSettings.minTimeLimit, BotSettings.maxTimeLimit + 1);
