@@ -163,8 +163,8 @@ public class Bot
 		return done;
 	}
 	
-	/*public void newDay(ArrayList<Day> info)
+	public void newDay(ArrayList<Day> info)
 	{
 		
-	}*/
+	}
 }
