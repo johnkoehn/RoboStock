@@ -304,16 +304,18 @@ public class Bot
 		{
 			//update and sell for morning
 			float stockValue = 0;
-			for(Purchase purchase : purchases)
+			for(int i = 0; i < purchases.size(); i++)
 			{
-				purchase.update(dayNum, true);
-				if(purchase.doISell())
+				purchases.get(i).update(dayNum, true);
+				if(purchases.get(i).doISell())
 				{
-					makeSell(purchase);
+					makeSell(purchases.get(i));
+					purchases.remove(i);
+					i -= 1;
 				}
 				else
 				{
-					stockValue += purchase.getValue();
+					stockValue += purchases.get(i).getValue();
 				}
 			}
 			netWorth = cash + stockValue;
@@ -361,17 +363,18 @@ public class Bot
 			
 			//update and sell for evening
 			stockValue = 0;
-			for(Purchase purchase : purchases)
+			for(int i = 0; i < purchases.size(); i++)
 			{
-				purchase.update(dayNum, false);
-				if(purchase.doISell())
+				purchases.get(i).update(dayNum, false);
+				if(purchases.get(i).doISell())
 				{
-					makeSell(purchase);
-					purchases.remove(purchase);
+					makeSell(purchases.get(i));
+					purchases.remove(i);
+					i -= 1;
 				}
 				else
 				{
-					stockValue += purchase.getValue();
+					stockValue += purchases.get(i).getValue();
 				}
 			}
 			netWorth = stockValue + cash;
@@ -422,6 +425,7 @@ public class Bot
 	
 	private void attemptBuy(float price, int companyIndex, float stockMomentum)
 	{
+		//System.out.println(stockMomentum);
 		if(stockMomentum >= momentum)
 		{
 			//buy some shares
@@ -445,5 +449,17 @@ public class Bot
 		
 		averageReturn = ((averageReturn * (numOfClosedTrades - 1)) + gain) / numOfClosedTrades;
 		
+	}
+	
+	public void sellAll()
+	{
+		for(int i = 0; i < purchases.size(); i++)
+		{
+			
+			makeSell(purchases.get(i));
+			purchases.remove(i);
+			i -= 1;
+		}
+		System.out.println(cash);
 	}
 }

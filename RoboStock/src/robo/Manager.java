@@ -53,6 +53,18 @@ public class Manager
 			threadArray[i].start();
 		}
 		
+		for(int i = 0; i < threadArray.length; i++)
+		{
+			try
+			{
+				threadArray[i].join();
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		//put other 90 threads to sleep
 //		for(int i = 10; i < 100; i++)
 //		{

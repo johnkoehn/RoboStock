@@ -8,8 +8,8 @@ package robo;
  */
 public class Buy
 {
-	float momentumOpening;
-	float momentumClosing;
+	float momentumOpening = 0;
+	float momentumClosing = 0;
 	float previousOpeningPrice;
 	float currentOpeningPrice;
 	float currentClosingPrice;
@@ -32,14 +32,14 @@ public class Buy
 			
 		previousOpeningPrice = currentOpeningPrice;
 		currentOpeningPrice = price;
-		float change = (currentOpeningPrice - previousOpeningPrice) / previousOpeningPrice * 100;
+		float change = ((currentOpeningPrice - previousOpeningPrice) / previousOpeningPrice) * 100;
 		if(dataPoints >= numOfAvgPoints)
 		{
-			momentumOpening = (change + (momentumOpening * numOfAvgPoints - 1)) / numOfAvgPoints;
+			momentumOpening = (change + (momentumOpening * (numOfAvgPoints - 1))) / numOfAvgPoints;
 		}
 		else
 		{
-			momentumOpening = (change + (momentumOpening * dataPoints)) / (dataPoints + 1);
+			momentumOpening = (change + (momentumOpening * dataPoints)) / (dataPoints);
 		}
 		
 		return momentumOpening;
@@ -59,7 +59,7 @@ public class Buy
 		float change = (currentClosingPrice - previousCloseingPrice) / previousCloseingPrice * 100;
 		if(dataPoints >= numOfAvgPoints)
 		{
-			momentumClosing = (change + (momentumClosing * numOfAvgPoints - 1)) / numOfAvgPoints;
+			momentumClosing = (change + (momentumClosing * (numOfAvgPoints - 1))) / numOfAvgPoints;
 		}
 		else
 		{

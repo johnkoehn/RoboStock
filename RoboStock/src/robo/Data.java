@@ -35,7 +35,7 @@ public class Data
 			    String close = record.get(1);
 			    String open = record.get(3);
 			    Day today = new Day(Float.parseFloat(open),Float.parseFloat(close));
-			    dayNum.add(0, today);
+			    dayNum.add(today);
 			}
 			companies.add(dayNum);
 		}
