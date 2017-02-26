@@ -1,34 +1,29 @@
 package robo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class ThreadSimulator implements Runnable
 {
 	private Bot bot = new Bot();
 	private int currentDay = 0;
 	public volatile boolean done = false;
-	private ArrayList<Bot> generation;
+	private ArrayBlockingQueue<Bot> generation;
 	String name;
 	Manager mang;
-	public ThreadSimulator(Manager m, Bot bot, String name) 
+	public ThreadSimulator(ArrayBlockingQueue<Bot> generation) 
 	{
-		mang = m;
-		this.bot = bot;
-		this.name = name;
-		generation = m.getGeneration();
+		this.generation = generation;
 	}
-	
-	public void setBot(Bot bot)
-	{
-		this.bot = bot;
-	}
+
 	
 	synchronized public void run()
 	{
 		boolean run = true;
 		while(run)
 		{
-			generation = mang.getGeneration();
 			bot.setRunning(true);
 //			System.out.println(name + " is running");
 			for(currentDay = 0; currentDay < Data.TOTALDAYS; currentDay++)
@@ -37,9 +32,10 @@ public class ThreadSimulator implements Runnable
 				bot.newDay(Data.getAllDataForDay(currentDay));
 			}
 			bot.sellAll();
-			done = true;	
-			bot.setRunning(false);
+			done = true;
 			bot.setDone();
+			bot.setRunning(false);
+			
 //			System.out.println(name +" is done");
 			run = startNewBot();
 		}
@@ -47,21 +43,36 @@ public class ThreadSimulator implements Runnable
 		
 	}
 	
-	public boolean startNewBot(){
-//		generation = mang.getGeneration();
-		boolean run = false;
-		synchronized(generation)
+	public boolean startNewBot()
+	{
+		if(generation.isEmpty() == false)
 		{
-			for(int i = 0; i < generation.size(); i++){
-				if(generation.get(i).isDone() == false && generation.get(i).isRunning() == false){
-					this.setBot(generation.get(i));
-					generation.get(i).setRunning(true);
-					//System.out.println(name + ": " + i + ", " +  generation.get(i).isRunning() + ", " + generation.get(i).isDone());
+			try
+			{
+				bot = generation.take();
+				return true;
+			} catch (InterruptedException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		/*for (int i = 0; i < generation.size(); i++)
+		{
+			if (generation.get(i).isDone() == false && generation.get(i).isRunning() == false)
+			{
+				if (generation.get(i).setRunning(true))
+				{
+					bot = generation.get(i);
+					// System.out.println(name + ": " + i + ", " +
+					// generation.get(i).isRunning() + ", " +
+					// generation.get(i).isDone());
 					run = true;
 					return run;
 				}
 			}
-		}
-		return run;
+		}*/
+		return false;
 	}
 }

@@ -293,15 +293,19 @@ public class Bot
 		return done;
 	}
 	
-	public void setRunning(boolean b)
+	public synchronized boolean setRunning(boolean b)
 	{
+		if(running)
+			return false;
 		running = b;
+		return true;
 	}
 	
 	public boolean isRunning()
 	{
 		return running;
 	}
+	
 	public void newDay(ArrayList<Day> info)
 	{
 		if(buys.isEmpty())

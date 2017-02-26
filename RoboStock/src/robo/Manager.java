@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class Manager
 {
 	private ArrayList<Bot> currentGeneration = new ArrayList<Bot>();
+	private ArrayBlockingQueue<Bot> blockingQueue;
 	DataRender dr;
 	public Manager()
 	{
@@ -40,11 +42,12 @@ public class Manager
 	
 	public void startNewGeneration()
 	{
+		blockingQueue = new ArrayBlockingQueue<Bot>(currentGeneration.size(), false, currentGeneration);
 		//create threads
-		Thread[] threadArray = new Thread[4];
+		Thread[] threadArray = new Thread[10];
 		for(int i = 0; i < threadArray.length; i++)
 		{
-			threadArray[i] = new Thread(new ThreadSimulator(this, currentGeneration.get(i), "Thread " + i));
+			threadArray[i] = new Thread(new ThreadSimulator(blockingQueue));
 		}
 
 		for(int i = 0; i < threadArray.length; i++)
