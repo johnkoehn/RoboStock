@@ -1,6 +1,8 @@
 package robo;
 
+import java.awt.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -22,11 +24,11 @@ public class Bot
 	private float netWorth;
 	private int wins;
 	private int losses;
-	private float avgWorth; //low
+	private float avgWorth;
 	
 	//trading
 	private ArrayList<Buy> buys;
-	private ArrayList<Purchase> purchases;
+	private LinkedList<Purchase> purchases;
 	private int dayNum = 0;
 	private int numOfClosedTrades;
 	private int currentCompany = 0;
@@ -39,7 +41,7 @@ public class Bot
 	public Bot()
 	{
 		buys = new ArrayList<Buy>();
-		purchases = new ArrayList<Purchase>();
+		purchases = new LinkedList<Purchase>();
 		dailyWorth = new ArrayList<Float>();
 	}
 	
@@ -171,6 +173,8 @@ public class Bot
 	
 	public Bot mutate(Random r)
 	{
+		
+		
 		//create a bot with new genes
 		Bot bot = new Bot();
 		
@@ -460,6 +464,15 @@ public class Bot
 			purchases.remove(i);
 			i -= 1;
 		}
-		System.out.println(cash);
+		dailyWorth.add(cash);
+		double total = 0;
+		for(int i = 0; i < dailyWorth.size(); i++)
+		{
+			total += dailyWorth.get(i);
+		}
+		avgWorth = (float) (total / dailyWorth.size());
+		dayNum = 0;
+		purchases = new LinkedList<Purchase>();
+		//System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
 	}
 }

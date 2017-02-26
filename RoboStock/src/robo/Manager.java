@@ -40,7 +40,6 @@ public class Manager
 	
 	public void startNewGeneration()
 	{
-		Manager m = new Manager();
 		//create threads
 		Thread[] threadArray = new Thread[15];
 		for(int i = 0; i < threadArray.length; i++)
@@ -113,9 +112,13 @@ public class Manager
 	public static void main(String args[]) throws IOException{
 		Manager m = new Manager();
 		m.createFirstGeneration();
-		m.startNewGeneration();
-		m.createDataRender();
-		m.startReproduction();
+		for(int i = 0; i < 3; i++)
+		{
+			m.startNewGeneration();
+			m.createDataRender();
+			m.startReproduction();
+		}
+
 	}
 	
 	

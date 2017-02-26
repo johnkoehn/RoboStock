@@ -25,24 +25,29 @@ public class ThreadSimulator implements Runnable
 	
 	synchronized public void run()
 	{
-		generation = mang.getGeneration();
-		bot.setRunning(true);
-//		System.out.println(name + " is running");
-		for(currentDay = 0; currentDay < Data.TOTALDAYS; currentDay++)
+		boolean run = true;
+		while(run)
 		{
+			generation = mang.getGeneration();
 			bot.setRunning(true);
-			bot.newDay(Data.getAllDataForDay(currentDay));
+//			System.out.println(name + " is running");
+			for(currentDay = 0; currentDay < Data.TOTALDAYS; currentDay++)
+			{
+				bot.setRunning(true);
+				bot.newDay(Data.getAllDataForDay(currentDay));
+			}
+			bot.sellAll();
+			done = true;	
+			bot.setRunning(false);
+			bot.setDone();
+//			System.out.println(name +" is done");
+			run = startNewBot();
 		}
-		bot.sellAll();
-		done = true;	
-		bot.setRunning(false);
-		bot.setDone();
-//		System.out.println(name +" is done");
-		startNewBot();
+
 		
 	}
 	
-	public void startNewBot(){
+	public boolean startNewBot(){
 //		generation = mang.getGeneration();
 		boolean run = false;
 		synchronized(generation)
@@ -53,11 +58,10 @@ public class ThreadSimulator implements Runnable
 					generation.get(i).setRunning(true);
 					//System.out.println(name + ": " + i + ", " +  generation.get(i).isRunning() + ", " + generation.get(i).isDone());
 					run = true;
-					break;
+					return run;
 				}
 			}
 		}
-		if(run)
-			run();
+		return run;
 	}
 }

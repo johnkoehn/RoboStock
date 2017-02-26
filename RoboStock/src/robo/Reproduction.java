@@ -155,7 +155,17 @@ public class Reproduction
 		//all elites survive on another generation
 		while(elites.size()>0)
 		{
-			children.add(elites.remove(0));
+			Bot bot = new Bot();
+			bot.setMaximumLoss(elites.get(0).getMaximumLoss());
+			bot.setMomentum(elites.get(0).getMomentum());
+			bot.setMovingAverage(elites.get(0).getMovingAverage());
+			bot.setPercentCashOnHand(elites.get(0).getPercentCashOnHand());
+			bot.setPurchaseLot(elites.get(0).getPurchaseLot());
+			bot.setSellPrice(elites.get(0).getSellPrice());
+			bot.setTimeLimit(elites.get(0).getTimeLimit());
+			bot.setTrailingPrice(elites.get(0).getTrailingPrice());
+			children.add(bot);
+			elites.remove(0);
 		}
 	}
 
