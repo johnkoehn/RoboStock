@@ -117,7 +117,7 @@ public class Manager
 		Manager m = new Manager();
 		m.createFirstGeneration();
 
-		for(int i = 0; i < 34; i++)
+		for(int i = 0; i < 50; i++)
 		{
 			m.startNewGeneration();
 			m.createDataRender();
