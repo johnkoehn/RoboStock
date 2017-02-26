@@ -69,7 +69,8 @@ public class Reproduction
 		{
 			// scale it down to 0-fitnessScaleTo, then it truncates the
 			// remainder
-			timesIsParent = (int) (bots.get(i).getFitness() / (100.0 / fitnessScaleTo));
+			timesIsParent = (int) (bots.get(i).getFitness() % (fitnessScaleTo));
+			System.out.println(timesIsParent);
 			for (int j = 0; j < timesIsParent; j++)
 			{
 				parents.add(bots.get(i));
@@ -77,7 +78,7 @@ public class Reproduction
 		}
 
 		// step 2: stochastic selection
-		int numOfStochasticParents = (int) (parents.size() / remainderRatio) - parents.size();
+		int numOfStochasticParents = (int) (parents.size() * remainderRatio);
 
 		double totalStochasticVal = 0.0;
 		ArrayList<Double> stochasticVals = new ArrayList<Double>();
