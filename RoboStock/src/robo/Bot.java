@@ -18,11 +18,10 @@ public class Bot
 	private float cash;
 	
 	//performance
-	public int fitnessLevel;
 	private float averageReturn;
 	private float netWorth;
 	private int wins;
-	private int loses;
+	private int losses;
 	private float avgWorth; //low
 	
 	//trading
@@ -143,7 +142,19 @@ public class Bot
 	
 	public int getFitness()
 	{
-		return fitnessLevel;
+		if(numOfClosedTrades<8)
+			return 0;
+		double netWorthWeight=.50;
+		double avgReturnWeight=.20;
+		double winLossWeight=.20;
+		double avgWorthWeight=.20;
+		
+		double winLossRatio=wins/losses;
+		double netWorthRatio=netWorth/600000;
+		double avgReturnRatio=averageReturn/2.5;
+		double avgWorthRatio=avgWorth/375000;
+		
+		return (int)(100*(netWorthWeight*netWorthRatio + winLossWeight*winLossRatio + avgReturnWeight*avgReturnRatio + avgWorthWeight*avgWorthRatio));
 	}
 	
 	public double getCash()
@@ -417,7 +428,7 @@ public class Bot
 		if(gain > 0)
 			wins += 1;
 		else 
-			loses += 1;
+			losses += 1;
 		
 		averageReturn = ((averageReturn * (numOfClosedTrades - 1)) + gain) / numOfClosedTrades;
 		
