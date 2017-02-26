@@ -116,14 +116,34 @@ public class Manager
 	public static void main(String args[]) throws IOException{
 		Manager m = new Manager();
 		m.createFirstGeneration();
+<<<<<<< Updated upstream
 
 		for(int i = 0; i < 34; i++)
+=======
+		for(int i = 0; i < 5; i++)
+>>>>>>> Stashed changes
 		{
 			m.startNewGeneration();
 			m.createDataRender();
 			m.startReproduction();
 		}
-
+		
+		Bot b = m.currentGeneration.get(0);
+		int max = m.currentGeneration.get(0).getFitness();
+		for(int i = 1; i < m.currentGeneration.size(); i++) {
+			if(m.currentGeneration.get(i).getFitness() > max) {
+				b = m.currentGeneration.get(i);
+			}
+		}
+		
+		System.out.println(b.momentum);
+		System.out.println(b.sellPrice);
+		System.out.println(b.trailingPrice);
+		System.out.println(b.maximumLoss);
+		System.out.println(b.percentCashOnHand);
+		System.out.println(b.purchaseLot);
+		System.out.println(b.timeLimit);
+		System.out.println(b.movingAverage);
 	}
 	
 	

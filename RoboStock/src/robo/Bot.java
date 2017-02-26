@@ -8,14 +8,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Bot
 {
-	private float momentum;
-	private float sellPrice;
-	private float trailingPrice;
-	private float maximumLoss;
-	private int percentCashOnHand;
-	private int purchaseLot;
-	private int timeLimit;
-	private int movingAverage;
+	public float momentum;
+	public float sellPrice;
+	public float trailingPrice;
+	public float maximumLoss;
+	public int percentCashOnHand;
+	public int purchaseLot;
+	public int timeLimit;
+	public int movingAverage;
 	
 	private float cash;
 	
