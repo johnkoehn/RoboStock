@@ -21,11 +21,15 @@ public class Bot
 	public int fitnessLevel;
 	private float averageReturn;
 	private float netWorth;
-	private float winsToLoses; //low
+	private int wins;
+	private int loses;
 	private float avgWorth; //low
 	
 	//trading
 	private ArrayList<Buy> buys;
+	private ArrayList<Purchase> purchases;
+	private int dayNum = 0;
+	private int numOfClosedTrades;
 	
 	//other
 	private boolean done = false;
@@ -34,6 +38,7 @@ public class Bot
 	public Bot()
 	{
 		buys = new ArrayList<Buy>();
+		purchases = new ArrayList<Purchase>();
 	}
 	
 	
@@ -150,7 +155,7 @@ public class Bot
 		return averageReturn;
 	}
 	
-	public Bot mutuate(Random r)
+	public Bot mutate(Random r)
 	{
 		//create a bot with new genes
 		Bot bot = new Bot();
@@ -261,6 +266,59 @@ public class Bot
 	
 	public void newDay(ArrayList<Day> info)
 	{
+		if(buys.isEmpty())
+		{
+			for(Day day : info)
+			{
+				Buy buy = new Buy(movingAverage);
+				buy.openingPrice(day.open);
+				buy.closingPrice(day.close);
+				buys.add(buy);
+			}
+		}
+		else
+		{
+			//update and sell for morning
+			for(Purchase purchase : purchases)
+			{
+				purchase.update(dayNum, true);
+				if(purchase.doISell())
+				{
+					makeSell(purchase);
+				}
+			}
+			
+			//update and buy for morning
+			for(Day day : info)
+			{
+				
+			}
+			
+			//update and sell for evening
+			for(Purchase purchase : purchases)
+			{
+				purchase.update(dayNum, false);
+				if(purchase.doISell())
+				{
+					makeSell(purchase);
+				}
+			}
+		}
+		dayNum += 1;
+	}
+	
+	private void makeSell(Purchase purchase)
+	{
+		numOfClosedTrades += 1;
+		float gain = (float)((purchase.getCurrentPrice() - purchase.getPurchasingPrice()) / purchase.getPurchasingPrice() * 100);
+		
+		cash += purchase.getShares() * purchase.getCurrentPrice();
+		if(gain > 0)
+			wins += 1;
+		else 
+			loses += 1;
+		
+		averageReturn = ((averageReturn * (numOfClosedTrades - 1)) + gain) / numOfClosedTrades;
 		
 	}
 }

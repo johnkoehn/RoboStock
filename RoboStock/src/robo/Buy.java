@@ -70,4 +70,14 @@ public class Buy
 		return momentumCloseing;
 	}
 	
+	public float getOpeningMomentum()
+	{
+		return momentumOpening;
+	}
+	
+	public float getClosingMomentum()
+	{
+		return momentumCloseing;
+	}
+	
 }

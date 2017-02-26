@@ -78,4 +78,9 @@ public class Purchase
 	public double getCurrentGain(){
 		return currentGain;
 	}
+	
+	public float getCurrentPrice()
+	{
+		return currentPrice;
+	}
 }
