@@ -90,9 +90,10 @@ public class Manager
 			double remainderRatio = scanner.nextDouble();
 			int elites = scanner.nextInt();
 			int scale = scanner.nextInt();
+			float hamming = scanner.nextFloat();
 			Random rand = new Random();
 			
-			Reproduction reproduction = new Reproduction(currentGeneration, crossover, remainderRatio, elites, scale, rand);
+			Reproduction reproduction = new Reproduction(currentGeneration, crossover, remainderRatio, elites, scale, rand, hamming);
 			currentGeneration = reproduction.run();
 			
 			scanner.close();
@@ -115,7 +116,8 @@ public class Manager
 	public static void main(String args[]) throws IOException{
 		Manager m = new Manager();
 		m.createFirstGeneration();
-		for(int i = 0; i < 24; i++)
+
+		for(int i = 0; i < 34; i++)
 		{
 			m.startNewGeneration();
 			m.createDataRender();

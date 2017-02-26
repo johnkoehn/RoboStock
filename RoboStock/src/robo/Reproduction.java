@@ -2,11 +2,14 @@ package robo;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Reproduction
 {
 	private ArrayList<Bot> bots;
+	private float hamming;
 	private double crossoverRatio;
 	private double remainderRatio;
 	private int eliteNumber;
@@ -26,9 +29,11 @@ public class Reproduction
 	 *            : number of elites to save until the next round
 	 * @param fitnessScaleTo:
 	 *            the maximum scaled value used for Remainder selection
+	 * @param Hamming:
+	 *            the max difference between the traits of two mating parents
 	 */
 	public Reproduction(ArrayList<Bot> bot, double crossoverRatio, double remainderRatio, int eliteNumber,
-			int fitnessScaleTo, Random r)
+			int fitnessScaleTo, Random r, float hamming)
 	{
 		bots=new ArrayList<Bot>();
 		for (int i = 0; i < bot.size(); i++)
@@ -40,6 +45,7 @@ public class Reproduction
 		this.eliteNumber = eliteNumber;
 		this.fitnessScaleTo = fitnessScaleTo;
 		this.r=r;
+		this.hamming = hamming;
 	}
 
 	public ArrayList<Bot> run()
@@ -60,6 +66,7 @@ public class Reproduction
 
 		return children;
 	}
+
 
 	private void selectParents(ArrayList<Bot> parents)
 	{
@@ -100,8 +107,8 @@ public class Reproduction
 		for (int i = 0; i < numOfStochasticParents; i++)
 		{
 			if (stochasticVals.get(index) < remainsInJump)// jumped over the end
-															// of this bot's
-															// range
+				// of this bot's
+				// range
 			{
 				remainsInJump = jumpValue - stochasticVals.get(index);
 				index++;
@@ -144,7 +151,7 @@ public class Reproduction
 		{
 			crossovers.add(parents.get(r.nextInt(parents.size())));
 		}
-		
+
 		//remaining are categorized as mutators
 		for(int i = 0; i < 18; i++)
 		{
@@ -152,6 +159,33 @@ public class Reproduction
 		}
 	}
 
+	/**
+	 * Hamming: Calculates the amount of difference between two parents to see if they are diverse
+	 * for mating
+	 * 
+	 * 
+	 */
+
+	private boolean hamming(Bot parent1,Bot parent2)
+	{
+		//chance to ham so as to not be left with only similar parents
+
+		float momentum =  parent1.getMomentum() - parent2.getMomentum();
+		float sellPrice = parent1.getSellPrice() - parent2.getSellPrice();
+		float trailingPrice = parent1.getTrailingPrice() - parent2.getTrailingPrice();
+		float maximumLoss = parent1.getMaximumLoss() - parent2.getMaximumLoss();
+		float percentCashOnHand = (parent1.getPercentCashOnHand() - parent2.getPercentCashOnHand()) / 100;
+		float purchaseLot = (parent1.getPurchaseLot() - parent2.getPurchaseLot()) / 100;
+
+		float hammingDistance = momentum + sellPrice + trailingPrice + maximumLoss + percentCashOnHand + purchaseLot;
+		if(hammingDistance < hamming &&
+				hammingDistance > hamming * -1)
+		{
+			return false;
+		}
+
+		return true;
+	}
 	private void elitify(ArrayList<Bot> elites, ArrayList<Bot> children)
 	{
 		//all elites survive on another generation
@@ -176,10 +210,20 @@ public class Reproduction
 		if(crossovers.size()%2==1)
 			throw new InvalidParameterException("Odd number of crossovers");
 		Bot parent1,parent2,child;
+		int i,j;
 		while(crossovers.size()>0)
 		{
-			parent1=crossovers.remove(r.nextInt(crossovers.size()));
-			parent2=crossovers.remove(r.nextInt(crossovers.size()));
+			parent1=crossovers.get(r.nextInt(crossovers.size()));
+			parent2=crossovers.get(r.nextInt(crossovers.size()));
+			if(r.nextInt(4) % 2 == 0)
+			{
+
+				while(parent1 != parent2 && !hamming(parent1, parent2))
+				{
+					parent2 = crossovers.get(r.nextInt(crossovers.size()));
+				}
+			}
+			
 			child=new Bot();
 			if(r.nextBoolean())
 				child.setMaximumLoss(parent1.getMaximumLoss());
@@ -214,7 +258,13 @@ public class Reproduction
 			else
 				child.setTrailingPrice(parent2.getTrailingPrice());
 			children.add(child);
+			 Set<Bot> remove = new HashSet<Bot>();
+			 remove.add(parent2);
+			 remove.add(parent1);
+			crossovers.removeAll(remove);
 		}
+		
+		
 	}
 
 	private void mutate(ArrayList<Bot> mutators, ArrayList<Bot> children)
