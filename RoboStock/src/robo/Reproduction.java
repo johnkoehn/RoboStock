@@ -70,7 +70,7 @@ public class Reproduction
 			// scale it down to 0-fitnessScaleTo, then it truncates the
 			// remainder
 			timesIsParent = (int) (bots.get(i).getFitness() % (fitnessScaleTo));
-			System.out.println(timesIsParent);
+			//System.out.println(timesIsParent);
 			for (int j = 0; j < timesIsParent; j++)
 			{
 				parents.add(bots.get(i));
