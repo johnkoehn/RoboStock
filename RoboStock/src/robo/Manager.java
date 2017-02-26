@@ -1,11 +1,12 @@
 package robo;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Manager
 {
 	private ArrayList<Bot> currentGeneration = new ArrayList<Bot>();
-	private int generationNumber = 0;
 	
 	public Manager()
 	{
@@ -36,7 +37,7 @@ public class Manager
 		{
 			threadArray[i] = new Thread(new ThreadSimulator(this, currentGeneration.get(i), "Thread " + i));
 		}
-		//start first 10 threads
+
 		for(int i = 0; i < threadArray.length; i++)
 		{
 			threadArray[i].start();
@@ -55,10 +56,34 @@ public class Manager
 //		}	
 	}
 	
+	public void startReproduction()
+	{
+		Scanner scanner = new Scanner("data/reproductionSettings.txt");
+		double crossover = scanner.nextDouble();
+		double remainderRatio = scanner.nextDouble();
+		int elites = scanner.nextInt();
+		int scale = scanner.nextInt();
+		Random rand = new Random();
+		
+		scanner.close();	
+		
+		Reproduction reproduction = new Reproduction(currentGeneration, crossover, remainderRatio, elites, scale, rand);
+		currentGeneration = reproduction.run();
+		
+	}
+	
+	public void createDataRender()
+	{
+		DataRender dr = new DataRender();
+		dr.updateGraphs(currentGeneration);
+	}
+	
 	public static void main(String args[]){
 		Manager m = new Manager();
 		m.createFirstGeneration();
 		m.startNewGeneration();
+		m.createDataRender();
+		m.startReproduction();
 	}
 	
 	
