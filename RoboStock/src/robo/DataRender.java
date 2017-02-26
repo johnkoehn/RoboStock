@@ -37,6 +37,7 @@ public class DataRender
 	  ArrayList<Float> netWorth = new ArrayList<Float>();
 	  ArrayList<Integer> numChildren = new ArrayList<Integer>();
 	  JFrame sw;
+	  
  	  
 	public DataRender(ArrayList<Bot> generation)
 	{
@@ -46,7 +47,6 @@ public class DataRender
 		charts.add(constructWinLossGraph(generation));
 		charts.add(constructChildrenGraph(generation));
 		sw = new SwingWrapper<CategoryChart>(charts).displayChartMatrix();
-
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class DataRender
 	 public CategoryChart constructFitnessGraph(ArrayList<Bot> generation)
 	 {
 //		 XYChart fitChart = QuickChart.getChart("Fitness Growth Throughout Generations", "Generation", "", seriesName, xData, yData)
-		 fitGraph = new CategoryChartBuilder().title("Fitness Growth Throughout Generations").xAxisTitle("Generation").yAxisTitle("Fitness")
+		 fitGraph = new CategoryChartBuilder().title("Fitness Throughout Generations").xAxisTitle("Generation").yAxisTitle("Fitness")
 				 								.width(WIDTH).height(HEIGHT).build();
 		 fitGraph.getStyler().setDefaultSeriesRenderStyle(CategorySeriesRenderStyle.Line);
 		 computeAvgFitness(generation);
@@ -72,7 +72,7 @@ public class DataRender
 	 */
 	 public CategoryChart constructNetWorthGraph(ArrayList<Bot> generation)
 	 {
-		 netGraph = new CategoryChartBuilder().title("Net Worth Growth ThroughOut Generations").xAxisTitle("Generation").yAxisTitle("Net Worth")
+		 netGraph = new CategoryChartBuilder().title("Net Worth ThroughOut Generations").xAxisTitle("Generation").yAxisTitle("Net Worth")
 							.width(WIDTH).height(HEIGHT).build();
 		 netGraph.getStyler().setDefaultSeriesRenderStyle(CategorySeriesRenderStyle.Line);
 		 computeAvgNetWorth(generation);
@@ -87,7 +87,7 @@ public class DataRender
 		 */
 		 public CategoryChart constructWinLossGraph(ArrayList<Bot> generation)
 		 {
-			 winGraph = new CategoryChartBuilder().title("Win/Loss Ratio Growth ThroughOut Generations").xAxisTitle("Generation").yAxisTitle("Win/Loss Ratio")
+			 winGraph = new CategoryChartBuilder().title("Win/Loss Ratio ThroughOut Generations").xAxisTitle("Generation").yAxisTitle("Win/Loss Ratio")
 								.width(WIDTH).height(HEIGHT).build();
 			 winGraph.getStyler().setDefaultSeriesRenderStyle(CategorySeriesRenderStyle.Line);
 			 computeAvgWinLoss(generation);
@@ -165,6 +165,8 @@ public class DataRender
 	  * @param generation
 	  */
 	 public void updateGraphs(ArrayList<Bot> generation){
+		 
+		 generationNum++;
 		 numGenerations.add(generationNum);
 		 computeAvgFitness(generation);
 		 computeAvgWinLoss(generation);
@@ -175,10 +177,8 @@ public class DataRender
        	 charts.get(2).updateCategorySeries("winLoss", numGenerations, winLoss, null);
          charts.get(3).updateCategorySeries("children", numGenerations, numChildren, null);
        	 sw.repaint();
+       	 
 
-         generationNum++;
-         
-         
          //saveGeneration(generation);
 	 }
 	 
@@ -192,55 +192,4 @@ public class DataRender
 		 
 	 }
 	 
-	 public static void main(String[] args) throws InterruptedException 
-	 {
-		 //DataRender d = new DataRender(currentGeneration);
-//		 d.importGeneration("./GenerationData/series2.csv");
-//	    int numCharts = 2;
-//	    
-//	    ArrayList<XYChart> charts = new ArrayList<XYChart>();
-//	    double phase = 0;
-//	    double[][] initdata = getSineData(phase);
-//	    
-//	    for (int i = 0; i < numCharts; i++) {
-//	
-//	      XYChart chart = QuickChart.getChart("Simple XChart Real-time Demo", "Radians", "Sine", "sine", initdata[0], initdata[1]);
-//	      chart.getStyler().setYAxisMin((double) -10);
-//	      chart.getStyler().setYAxisMax((double) 10);
-//	      charts.add(chart);
-//	    }
-//	    
-//	    JFrame sw = new SwingWrapper<XYChart>(charts).displayChartMatrix();
-//	    while (true) {
-//
-//	          phase += 2 * Math.PI * 2 / 20.0;
-//
-//	          Thread.sleep(100);
-//
-//	          final double[][] data = getSineData(phase);
-//	          for(int i = 0; i< numCharts; i++){
-//	        	  charts.get(i).updateXYSeries("sine", data[0], data[1], null);
-//	          }
-//	          sw.repaint();
-//	        }
-	  }
-
-	  /**
-	   * Generates a set of random walk data
-	   *
-	   * @param numPoints
-	   * @return
-	   */
-	  private static double[][] getSineData(double phase) {
-		  
-		    double[] xData = new double[100];
-		    double[] yData = new double[100];
-		    for (int i = 0; i < xData.length; i++) {
-		      double radians = phase + (2 * Math.PI / xData.length * i);
-		      xData[i] = radians;
-		      yData[i] = Math.sin(radians);
-		    }
-		    return new double[][] { xData, yData };
-		  }
-
 	}
