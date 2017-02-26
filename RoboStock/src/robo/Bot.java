@@ -164,6 +164,8 @@ public class Bot
 		double winLossWeight=.20;
 		double avgWorthWeight=.20;
 		
+		if(losses == 0)
+			losses = 1;
 		double winLossRatio=wins/losses;
 		double netWorthRatio=netWorth/600000;
 		double avgReturnRatio=averageReturn/.5;

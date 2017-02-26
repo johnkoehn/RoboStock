@@ -44,7 +44,7 @@ public class Manager
 	{
 		blockingQueue = new ArrayBlockingQueue<Bot>(currentGeneration.size(), false, currentGeneration);
 		//create threads
-		Thread[] threadArray = new Thread[10];
+		Thread[] threadArray = new Thread[6];
 		for(int i = 0; i < threadArray.length; i++)
 		{
 			threadArray[i] = new Thread(new ThreadSimulator(blockingQueue));
@@ -115,7 +115,7 @@ public class Manager
 	public static void main(String args[]) throws IOException{
 		Manager m = new Manager();
 		m.createFirstGeneration();
-		for(int i = 0; i < 10; i++)
+		for(int i = 0; i < 24; i++)
 		{
 			m.startNewGeneration();
 			m.createDataRender();

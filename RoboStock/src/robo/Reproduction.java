@@ -69,7 +69,7 @@ public class Reproduction
 		{
 			// scale it down to 0-fitnessScaleTo, then it truncates the
 			// remainder
-			timesIsParent = (int) (bots.get(i).getFitness() % (fitnessScaleTo));
+			timesIsParent = (int) (bots.get(i).getFitness() / (100.0/fitnessScaleTo));
 			//System.out.println(timesIsParent);
 			for (int j = 0; j < timesIsParent; j++)
 			{
@@ -78,7 +78,8 @@ public class Reproduction
 		}
 
 		// step 2: stochastic selection
-		int numOfStochasticParents = (int) (parents.size() * remainderRatio);
+		int numOfStochasticParents =  (int) (parents.size() / remainderRatio) - parents.size();
+
 
 		double totalStochasticVal = 0.0;
 		ArrayList<Double> stochasticVals = new ArrayList<Double>();
@@ -136,18 +137,18 @@ public class Reproduction
 		}
 
 		// categorize crossovers
-		int numCrossOvers = (int) (crossoverRatio * parents.size());
+		int numCrossOvers = (int) (160);
 		if(numCrossOvers%2==1)
 			numCrossOvers-=1;
 		for (int i = 0; i < numCrossOvers; i++)
 		{
-			crossovers.add(parents.remove(r.nextInt(parents.size())));
+			crossovers.add(parents.get(r.nextInt(parents.size())));
 		}
 		
 		//remaining are categorized as mutators
-		while(parents.size()>0)
+		for(int i = 0; i < 18; i++)
 		{
-			mutators.add(parents.remove(0));
+			mutators.add(parents.get(r.nextInt(parents.size())));
 		}
 	}
 

@@ -44,8 +44,8 @@ public class DataRender
 		numGenerations.add(generationNum);
 		charts.add(constructFitnessGraph(generation));
 		charts.add(constructNetWorthGraph(generation));
-		charts.add(constructWinLossGraph(generation));
-		charts.add(constructChildrenGraph(generation));
+//		charts.add(constructWinLossGraph(generation));
+//		charts.add(constructChildrenGraph(generation));
 		sw = new SwingWrapper<CategoryChart>(charts).displayChartMatrix();
 	}
 	
@@ -169,13 +169,13 @@ public class DataRender
 		 generationNum++;
 		 numGenerations.add(generationNum);
 		 computeAvgFitness(generation);
-		 computeAvgWinLoss(generation);
+//		 computeAvgWinLoss(generation);
 		 computeAvgNetWorth(generation);
-		 computenumChildren(generation);
+//		 computenumChildren(generation);
        	 charts.get(0).updateCategorySeries("fitness", numGenerations, fitness, null);
        	 charts.get(1).updateCategorySeries("netWorth", numGenerations, netWorth, null);
-       	 charts.get(2).updateCategorySeries("winLoss", numGenerations, winLoss, null);
-         charts.get(3).updateCategorySeries("children", numGenerations, numChildren, null);
+//       	 charts.get(2).updateCategorySeries("winLoss", numGenerations, winLoss, null);
+//         charts.get(3).updateCategorySeries("children", numGenerations, numChildren, null);
        	 sw.repaint();
        	 
 
