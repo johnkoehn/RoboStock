@@ -83,4 +83,9 @@ public class Purchase
 	{
 		return currentPrice;
 	}
+	
+	public float getValue()
+	{
+		return currentPrice * shares;
+	}
 }

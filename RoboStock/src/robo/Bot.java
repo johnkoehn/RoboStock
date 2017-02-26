@@ -15,7 +15,7 @@ public class Bot
 	private int timeLimit;
 	private int movingAverage;
 	
-	private double cash;
+	private float cash;
 	
 	//performance
 	public int fitnessLevel;
@@ -30,6 +30,7 @@ public class Bot
 	private ArrayList<Purchase> purchases;
 	private int dayNum = 0;
 	private int numOfClosedTrades;
+	private int currentCompany = 0;
 	
 	//other
 	private boolean done = false;
@@ -57,7 +58,7 @@ public class Bot
 		
 		purchaseLot = ThreadLocalRandom.current().nextInt((int)BotSettings.minPurchaseLot, (int)BotSettings.maxPurchaseLot + 1);
 		
-		cash = BotSettings.startingCash;
+		cash = (float)BotSettings.startingCash;
 	}
 
 	public float getMomentum()
@@ -275,10 +276,12 @@ public class Bot
 				buy.closingPrice(day.close);
 				buys.add(buy);
 			}
+			netWorth = cash;
 		}
 		else
 		{
 			//update and sell for morning
+			float stockValue = 0;
 			for(Purchase purchase : purchases)
 			{
 				purchase.update(dayNum, true);
@@ -286,15 +289,55 @@ public class Bot
 				{
 					makeSell(purchase);
 				}
+				else
+				{
+					stockValue += purchase.getValue();
+				}
+			}
+			netWorth = cash + stockValue;
+			
+			//update buys for morning
+			for(int i = 0; i < info.size(); i++)
+			{
+				buys.get(i).openingPrice(info.get(i).getOpen());				
 			}
 			
-			//update and buy for morning
-			for(Day day : info)
+			//if possible, make purchases
+			if(cash >= (netWorth * (percentCashOnHand / 100.0)))
 			{
+				//we can buy
+				for(int i = currentCompany; i < buys.size(); i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
 				
+				//do the companies missed
+				for(int i = 0; i < currentCompany; i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
 			}
 			
 			//update and sell for evening
+			stockValue = 0;
 			for(Purchase purchase : purchases)
 			{
 				purchase.update(dayNum, false);
@@ -302,9 +345,67 @@ public class Bot
 				{
 					makeSell(purchase);
 				}
+				else
+				{
+					stockValue += purchase.getValue();
+				}
+			}
+			netWorth = stockValue + cash;
+			
+			//update and buy for evening
+			for(int i = 0; i < info.size(); i++)
+			{
+				buys.get(i).closingPrice(info.get(i).getClose());				
+			}
+			
+			//if possible, make purchases
+			if(cash >= (netWorth * (percentCashOnHand / 100.0)))
+			{
+				//we can buy
+				for(int i = currentCompany; i < buys.size(); i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentClosingPrice, i, buys.get(i).momentumClosing);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
+				
+				//do the companies missed
+				for(int i = 0; i < currentCompany; i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
 			}
 		}
 		dayNum += 1;
+		dailyWorth.add(netWorth);
+	}
+	
+	private void attemptBuy(float price, int companyIndex, float stockMomentum)
+	{
+		if(stockMomentum >= momentum)
+		{
+			//buy some shares
+			float cashToSpend = (float) (cash * (purchaseLot / 100.0));
+			int numOfShares = (int) (cashToSpend / price);
+			cash -= (numOfShares * price);
+			purchases.add(new Purchase(numOfShares, companyIndex, price, this));
+		}
 	}
 	
 	private void makeSell(Purchase purchase)

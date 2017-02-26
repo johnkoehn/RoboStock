@@ -9,10 +9,10 @@ package robo;
 public class Buy
 {
 	float momentumOpening;
-	float momentumCloseing;
+	float momentumClosing;
 	float previousOpeningPrice;
 	float currentOpeningPrice;
-	float currentCloseingPrice;
+	float currentClosingPrice;
 	float previousCloseingPrice;
 	int numOfAvgPoints;
 	int dataPoints;
@@ -49,25 +49,25 @@ public class Buy
 	{
 		if(dataPoints == 0)
 		{
-			currentCloseingPrice = price;
+			currentClosingPrice = price;
 			dataPoints += 1;
 			return 0;
 		}
 			
-		previousCloseingPrice = currentCloseingPrice;
-		currentCloseingPrice = price;
-		float change = (currentCloseingPrice - previousCloseingPrice) / previousCloseingPrice * 100;
+		previousCloseingPrice = currentClosingPrice;
+		currentClosingPrice = price;
+		float change = (currentClosingPrice - previousCloseingPrice) / previousCloseingPrice * 100;
 		if(dataPoints >= numOfAvgPoints)
 		{
-			momentumCloseing = (change + (momentumCloseing * numOfAvgPoints - 1)) / numOfAvgPoints;
+			momentumClosing = (change + (momentumClosing * numOfAvgPoints - 1)) / numOfAvgPoints;
 		}
 		else
 		{
-			momentumCloseing = (change + (momentumCloseing * dataPoints)) / (dataPoints + 1);
+			momentumClosing = (change + (momentumClosing * dataPoints)) / (dataPoints + 1);
 		}
 		
 		dataPoints += 1;
-		return momentumCloseing;
+		return momentumClosing;
 	}
 	
 	public float getOpeningMomentum()
@@ -77,7 +77,7 @@ public class Buy
 	
 	public float getClosingMomentum()
 	{
-		return momentumCloseing;
+		return momentumClosing;
 	}
 	
 }
