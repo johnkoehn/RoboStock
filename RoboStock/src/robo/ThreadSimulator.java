@@ -43,15 +43,17 @@ public class ThreadSimulator implements Runnable
 	
 	public synchronized void startNewBot(){
 //		generation = mang.getGeneration();
-		for(int i = 0; i < generation.size(); i++){
-			if(generation.get(i).isDone() == false && generation.get(i).isRunning() == false){
-				this.setBot(generation.get(i));
-				generation.get(i).setRunning(true);
-				run();
-				System.out.println(name + ": " + i + ", " +  generation.get(i).isRunning() + ", " + generation.get(i).isDone());
+		synchronized(generation)
+		{
+			for(int i = 0; i < generation.size(); i++){
+				if(generation.get(i).isDone() == false && generation.get(i).isRunning() == false){
+					this.setBot(generation.get(i));
+					generation.get(i).setRunning(true);
+					run();
+					System.out.println(name + ": " + i + ", " +  generation.get(i).isRunning() + ", " + generation.get(i).isDone());
+				}
 			}
 		}
-		
 		
 	}
 }

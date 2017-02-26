@@ -26,17 +26,17 @@ public class DataRender
 	  XYChart fitGraph;
 	  XYChart genGraph;
 	  int generationNum = 1;
-	  ArrayList<Integer> numGenerations;
-	  ArrayList<Integer> fitness;
-	  ArrayList<Integer> cash;
-	  ArrayList<Float> averageReturn;
+	  ArrayList<Integer> numGenerations = new ArrayList<Integer>();
+	  ArrayList<Double> fitness = new ArrayList<Double>();
+	  ArrayList<Integer> cash = new ArrayList<Integer>();
+	  ArrayList<Float> averageReturn = new ArrayList<Float>();
 	  JFrame sw;
  	  
-	public DataRender()
+	public DataRender(ArrayList<Bot> generation)
 	{
-		charts.add(constructFitnessGraph());
-		charts.add(constructGenerationGraph());
-		JFrame sw = new SwingWrapper<XYChart>(charts).displayChartMatrix();
+		charts.add(constructFitnessGraph(generation));
+		charts.add(constructGenerationGraph(generation));
+		sw = new SwingWrapper<XYChart>(charts).displayChartMatrix();
 	}
 	
 	/**
@@ -44,13 +44,14 @@ public class DataRender
 	 * 
 	 * @return
 	 */
-	 public XYChart constructFitnessGraph()
+	 public XYChart constructFitnessGraph(ArrayList<Bot> generation)
 	 {
 //		 XYChart fitChart = QuickChart.getChart("Fitness Growth Throughout Generations", "Generation", "", seriesName, xData, yData)
 		 fitGraph = new XYChartBuilder().title("Fitness Growth Throughout Generations").xAxisTitle("Generation").yAxisTitle("Fitness")
 				 								.width(1000).height(600).build();
 		 fitGraph.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
-//		 fitGraph.addSeries("fitness", new ArrayList<Integer>(), new ArrayList<Integer>());
+		 computeAvgFitness(generation);
+		 fitGraph.addSeries("fitness", numGenerations, fitness);
 		 
 		 return fitGraph;
 	 }
@@ -60,12 +61,13 @@ public class DataRender
 	 * 
 	 * @return
 	 */
-	 public XYChart constructGenerationGraph()
+	 public XYChart constructGenerationGraph(ArrayList<Bot> generation)
 	 {
 		 genGraph = new XYChartBuilder().title("Performance of Generation " + generationNum).xAxisTitle("Money in Hand").yAxisTitle("Average Return")
 							.width(1000).height(600).build();
 		 genGraph.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
-//		 genGraph.addSeries("generation", new ArrayList<Integer>(), new ArrayList<Float>());
+		 computePerformers(generation);
+		 genGraph.addSeries("generation", cash, averageReturn);
 		 return genGraph;
 	 }
 	 
@@ -76,7 +78,7 @@ public class DataRender
 			sumFitness += generation.get(i).getFitness();
 		 }
 		 numGenerations.add(generationNum);
-		 fitness.add(sumFitness/generation.size());
+		 fitness.add((double)sumFitness/generation.size());
 	 }
 	 
 	 /**
@@ -110,11 +112,13 @@ public class DataRender
        	 charts.get(1).updateXYSeries("generation", cash, averageReturn, null);
          
          sw.repaint();
-         saveGeneration(generation);
+         generationNum++;
+         
+         //saveGeneration(generation);
 	 }
 	 
 	 public void saveGeneration(ArrayList<Bot> generation){
-		 CSVExporter.writeCSVColumns(genGraph, "../GenerationData/Generation" + generationNum);
+		 CSVExporter.writeCSVColumns(genGraph, "./GenerationData/Generation" + generationNum);
 	 }
 	 
 	 public void importGeneration(String dataFile){
@@ -125,7 +129,7 @@ public class DataRender
 	 
 	 public static void main(String[] args) throws InterruptedException 
 	 {
-		 DataRender d = new DataRender();
+		 //DataRender d = new DataRender(currentGeneration);
 //		 d.importGeneration("./GenerationData/series2.csv");
 //	    int numCharts = 2;
 //	    

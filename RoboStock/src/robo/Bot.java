@@ -40,6 +40,7 @@ public class Bot
 	{
 		buys = new ArrayList<Buy>();
 		purchases = new ArrayList<Purchase>();
+		dailyWorth = new ArrayList<Float>();
 	}
 	
 	
@@ -318,6 +319,7 @@ public class Bot
 			netWorth = cash + stockValue;
 			
 			//update buys for morning
+			//System.out.println(info.size());
 			for(int i = 0; i < info.size(); i++)
 			{
 				buys.get(i).openingPrice(info.get(i).getOpen());				
@@ -330,7 +332,7 @@ public class Bot
 				for(int i = currentCompany; i < buys.size(); i++)
 				{
 					//if possible, make purchases
-					if(cash >= (netWorth * percentCashOnHand))
+					if(cash >= (netWorth * (percentCashOnHand/100.0)))
 					{
 						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
 					}
@@ -345,7 +347,7 @@ public class Bot
 				for(int i = 0; i < currentCompany; i++)
 				{
 					//if possible, make purchases
-					if(cash >= (netWorth * percentCashOnHand))
+					if(cash >= (netWorth * (percentCashOnHand/100.0)))
 					{
 						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
 					}
@@ -365,6 +367,7 @@ public class Bot
 				if(purchase.doISell())
 				{
 					makeSell(purchase);
+					purchases.remove(purchase);
 				}
 				else
 				{
@@ -386,7 +389,7 @@ public class Bot
 				for(int i = currentCompany; i < buys.size(); i++)
 				{
 					//if possible, make purchases
-					if(cash >= (netWorth * percentCashOnHand))
+					if(cash >= (netWorth * (percentCashOnHand/100.0)))
 					{
 						attemptBuy(buys.get(i).currentClosingPrice, i, buys.get(i).momentumClosing);
 					}
@@ -401,7 +404,7 @@ public class Bot
 				for(int i = 0; i < currentCompany; i++)
 				{
 					//if possible, make purchases
-					if(cash >= (netWorth * percentCashOnHand))
+					if(cash >= (netWorth * (percentCashOnHand/100.0)))
 					{
 						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
 					}
@@ -414,7 +417,7 @@ public class Bot
 			}
 		}
 		dayNum += 1;
-		dailyWorth.add(netWorth);
+		dailyWorth.add(new Float(netWorth));
 	}
 	
 	private void attemptBuy(float price, int companyIndex, float stockMomentum)

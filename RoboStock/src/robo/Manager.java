@@ -1,5 +1,8 @@
 package robo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -7,14 +10,20 @@ import java.util.Scanner;
 public class Manager
 {
 	private ArrayList<Bot> currentGeneration = new ArrayList<Bot>();
-	
+	DataRender dr;
 	public Manager()
 	{
 		
 	}
-	public void createFirstGeneration()
+	public void createFirstGeneration() throws IOException
 	{
+		
 		BotSettings.init("data/botSettings.txt");
+		for(int i = 1; i < 16; i++)
+		{
+			Data d = new Data();
+			d.parseData("data/quotes" + i + ".csv");
+		}
 		Bot bot;
 		for(int i = 0; i < 100; i++)
 		{
@@ -22,6 +31,7 @@ public class Manager
 			bot.init();
 			currentGeneration.add(bot);
 		}
+		 dr = new DataRender(currentGeneration);
 	}
 	
 	public ArrayList<Bot> getGeneration(){
@@ -58,27 +68,37 @@ public class Manager
 	
 	public void startReproduction()
 	{
-		Scanner scanner = new Scanner("data/reproductionSettings.txt");
-		double crossover = scanner.nextDouble();
-		double remainderRatio = scanner.nextDouble();
-		int elites = scanner.nextInt();
-		int scale = scanner.nextInt();
-		Random rand = new Random();
+		Scanner scanner;
+		try
+		{
+			scanner = new Scanner(new File("data/reproductionSettings.txt"));
+			double crossover = scanner.nextDouble();
+			double remainderRatio = scanner.nextDouble();
+			int elites = scanner.nextInt();
+			int scale = scanner.nextInt();
+			Random rand = new Random();
+			
+			Reproduction reproduction = new Reproduction(currentGeneration, crossover, remainderRatio, elites, scale, rand);
+			currentGeneration = reproduction.run();
+			
+			scanner.close();
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		
-		scanner.close();	
-		
-		Reproduction reproduction = new Reproduction(currentGeneration, crossover, remainderRatio, elites, scale, rand);
-		currentGeneration = reproduction.run();
+
 		
 	}
 	
 	public void createDataRender()
 	{
-		DataRender dr = new DataRender();
 		dr.updateGraphs(currentGeneration);
 	}
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws IOException{
 		Manager m = new Manager();
 		m.createFirstGeneration();
 		m.startNewGeneration();
