@@ -18,7 +18,7 @@ public class ReproductionTest
 		{
 			bots.add(new Bot());
 			(bots.get(i)).init();
-			bots.get(i).fitnessLevel=r.nextInt(100)+1;
+			//bots.get(i).fitnessLevel=r.nextInt(100)+1;
 		}
 		double crossoverRatio=.80;
 		double remainderRatio=.75;

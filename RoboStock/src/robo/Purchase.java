@@ -78,4 +78,14 @@ public class Purchase
 	public double getCurrentGain(){
 		return currentGain;
 	}
+	
+	public float getCurrentPrice()
+	{
+		return currentPrice;
+	}
+	
+	public float getValue()
+	{
+		return currentPrice * shares;
+	}
 }

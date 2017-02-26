@@ -15,27 +15,39 @@ public class Bot
 	private int timeLimit;
 	private int movingAverage;
 	
-	private double cash;
+	private float cash;
 	
 	//performance
-	public int fitnessLevel;
 	private float averageReturn;
-	private ArrayList<Double> netWorth;
+	private float netWorth;
+	private int wins;
+	private int losses;
+	private float avgWorth; //low
+	
+	//trading
+	private ArrayList<Buy> buys;
+	private ArrayList<Purchase> purchases;
+	private int dayNum = 0;
+	private int numOfClosedTrades;
+	private int currentCompany = 0;
 	
 	//other
 	private volatile boolean done = false;
 	private volatile boolean running = false;
+	private ArrayList<Float> dailyWorth;
 	
 	public Bot()
 	{
-		
+		buys = new ArrayList<Buy>();
+		purchases = new ArrayList<Purchase>();
 	}
+	
 	
 	public void init()
 	{
 		//used for a fist generation bot :D
 		//Here we go!
-		momentum = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minMomentum * 100), (int)(BotSettings.maxMomuntum*100 + 1))/100.0);
+		momentum = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minMomentum * 100), (int)(BotSettings.maxMomentum*100 + 1))/100.0);
 		sellPrice = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minSellPrice * 100), (int)(BotSettings.maxSellPrice*100 + 1))/100.0);
 		trailingPrice = (float) (ThreadLocalRandom.current().nextInt((int)(BotSettings.minTrailingPrice * 100),(int)((BotSettings.maxTrailingPrice*100 + 1)))/100.0);
 		maximumLoss = (float)(ThreadLocalRandom.current().nextInt((int)(BotSettings.minMaximumLoss * 100), (int)(BotSettings.maxMaximumLoss*100 + 1))/100.0);
@@ -46,7 +58,7 @@ public class Bot
 		
 		purchaseLot = ThreadLocalRandom.current().nextInt((int)BotSettings.minPurchaseLot, (int)BotSettings.maxPurchaseLot + 1);
 		
-		cash = BotSettings.startingCash;
+		cash = (float)BotSettings.startingCash;
 	}
 
 	public float getMomentum()
@@ -131,7 +143,19 @@ public class Bot
 	
 	public int getFitness()
 	{
-		return fitnessLevel;
+		if(numOfClosedTrades<8)
+			return 0;
+		double netWorthWeight=.50;
+		double avgReturnWeight=.20;
+		double winLossWeight=.20;
+		double avgWorthWeight=.20;
+		
+		double winLossRatio=wins/losses;
+		double netWorthRatio=netWorth/600000;
+		double avgReturnRatio=averageReturn/2.5;
+		double avgWorthRatio=avgWorth/375000;
+		
+		return (int)(100*(netWorthWeight*netWorthRatio + winLossWeight*winLossRatio + avgReturnWeight*avgReturnRatio + avgWorthWeight*avgWorthRatio));
 	}
 	
 	public double getCash()
@@ -144,14 +168,103 @@ public class Bot
 		return averageReturn;
 	}
 	
-	public Bot mutuate()
+	public Bot mutate(Random r)
 	{
-		return new Bot();
+		//create a bot with new genes
+		Bot bot = new Bot();
+		
+		//momentum
+		if(r.nextBoolean())
+		{
+			float modifier = (float) (ThreadLocalRandom.current().nextInt(-(int)(BotSettings.momentumMutation * 100), (int)(BotSettings.momentumMutation*100 + 1))/100.0);
+			bot.setMomentum(calcMutation(modifier, momentum, BotSettings.minMomentum, BotSettings.maxMomentum));
+		}
+		else
+			bot.setMomentum(momentum);
+		
+		if(r.nextBoolean())
+		{
+			float modifier = (float) (ThreadLocalRandom.current().nextInt(-(int)BotSettings.sellPriceMutation, (int)(BotSettings.sellPriceMutation + 1))/100.0);
+			bot.setSellPrice((calcMutation(modifier, sellPrice, BotSettings.minSellPrice, BotSettings.maxSellPrice)));
+		}
+		else
+			bot.setSellPrice(sellPrice);
+		
+		if(r.nextBoolean())
+		{
+			float modifier = (float) (ThreadLocalRandom.current().nextInt(-(int)(BotSettings.trailingPriceMutation * 100),(int)((BotSettings.trailingPriceMutation*100 + 1)))/100.0);
+			bot.setTrailingPrice(calcMutation(modifier, trailingPrice, BotSettings.minTrailingPrice, BotSettings.maxTrailingPrice));
+		}
+		else
+			bot.setTrailingPrice(trailingPrice);
+		
+		if(r.nextBoolean())
+		{
+			float modifier = (float)(ThreadLocalRandom.current().nextInt(-(int)(BotSettings.maximumLossMutation * 100), (int)(BotSettings.maximumLossMutation*100 + 1))/100.0);
+			bot.setMaximumLoss(calcMutation(modifier, maximumLoss, BotSettings.minMaximumLoss, BotSettings.maxMaximumLoss));
+		}
+		else
+			bot.setMaximumLoss(maximumLoss);
+		
+		if(r.nextBoolean())
+		{
+			int modifier = ThreadLocalRandom.current().nextInt(-BotSettings.percentCashOnHandMutation, BotSettings.percentCashOnHandMutation + 1);
+			bot.setPercentCashOnHand(calcMutation(modifier, percentCashOnHand, BotSettings.minPercentCashOnHand, BotSettings.maxPercentCashOnHand));
+		}
+		else
+			bot.setPercentCashOnHand(percentCashOnHand);
+		
+		if(r.nextBoolean())
+		{
+			int modifier = ThreadLocalRandom.current().nextInt(-BotSettings.timeLimitMutation, BotSettings.timeLimitMutation + 1);
+			bot.setTimeLimit(calcMutation(modifier, timeLimit, BotSettings.minTimeLimit, BotSettings.maxTimeLimit));
+		}
+		else
+			bot.setTimeLimit(timeLimit);
+		
+		if(r.nextBoolean())
+		{
+			int modifier = ThreadLocalRandom.current().nextInt(-BotSettings.movingAverageMutation, BotSettings.movingAverageMutation);
+			bot.setMovingAverage(calcMutation(modifier, movingAverage, BotSettings.minMovingAverage, BotSettings.maxMovingAverage));
+		}
+		else
+			bot.setMovingAverage(movingAverage);
+			
+		//fucked up case
+		float modifier = 0;
+		if(r.nextBoolean())
+			modifier = ThreadLocalRandom.current().nextInt(-(int)BotSettings.purchaseLotMutation, (int)BotSettings.purchaseLotMutation + 1);
+		int newPurchaseLot = purchaseLot + (int)modifier;	
+		if(newPurchaseLot > BotSettings.maxPurchaseLot)
+			bot.setPurchaseLot((int)BotSettings.maxPurchaseLot);
+		else if(newPurchaseLot < BotSettings.minPurchaseLot)
+			bot.setPurchaseLot((int)BotSettings.minPurchaseLot);
+		else
+			bot.setPurchaseLot(newPurchaseLot);
+		
+		return bot;
 	}
 	
-	public ArrayList<Double> getNetWorth()
+	private float calcMutation(float modifier, float currentValue, float min, float max)
 	{
-		return netWorth;
+		float newValue = modifier + currentValue;
+		if(newValue > max)
+			return max;
+		else if(newValue < min)
+			return min;
+		else
+			return newValue;
+	}
+	
+	private int calcMutation(int modifier, int currentValue, int min, int max)
+	{
+		int newValue = modifier + currentValue;
+		if(newValue > max)
+			return max;
+		else if(newValue < min)
+			return min;
+		else
+			return newValue;
 	}
 	
 	public void setDone()
@@ -175,6 +288,159 @@ public class Bot
 	}
 	public void newDay(ArrayList<Day> info)
 	{
+		if(buys.isEmpty())
+		{
+			for(Day day : info)
+			{
+				Buy buy = new Buy(movingAverage);
+				buy.openingPrice(day.open);
+				buy.closingPrice(day.close);
+				buys.add(buy);
+			}
+			netWorth = cash;
+		}
+		else
+		{
+			//update and sell for morning
+			float stockValue = 0;
+			for(Purchase purchase : purchases)
+			{
+				purchase.update(dayNum, true);
+				if(purchase.doISell())
+				{
+					makeSell(purchase);
+				}
+				else
+				{
+					stockValue += purchase.getValue();
+				}
+			}
+			netWorth = cash + stockValue;
+			
+			//update buys for morning
+			for(int i = 0; i < info.size(); i++)
+			{
+				buys.get(i).openingPrice(info.get(i).getOpen());				
+			}
+			
+			//if possible, make purchases
+			if(cash >= (netWorth * (percentCashOnHand / 100.0)))
+			{
+				//we can buy
+				for(int i = currentCompany; i < buys.size(); i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
+				
+				//do the companies missed
+				for(int i = 0; i < currentCompany; i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
+			}
+			
+			//update and sell for evening
+			stockValue = 0;
+			for(Purchase purchase : purchases)
+			{
+				purchase.update(dayNum, false);
+				if(purchase.doISell())
+				{
+					makeSell(purchase);
+				}
+				else
+				{
+					stockValue += purchase.getValue();
+				}
+			}
+			netWorth = stockValue + cash;
+			
+			//update and buy for evening
+			for(int i = 0; i < info.size(); i++)
+			{
+				buys.get(i).closingPrice(info.get(i).getClose());				
+			}
+			
+			//if possible, make purchases
+			if(cash >= (netWorth * (percentCashOnHand / 100.0)))
+			{
+				//we can buy
+				for(int i = currentCompany; i < buys.size(); i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentClosingPrice, i, buys.get(i).momentumClosing);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
+				
+				//do the companies missed
+				for(int i = 0; i < currentCompany; i++)
+				{
+					//if possible, make purchases
+					if(cash >= (netWorth * percentCashOnHand))
+					{
+						attemptBuy(buys.get(i).currentOpeningPrice, i, buys.get(i).momentumOpening);
+					}
+					else
+					{
+						currentCompany = i;
+						break;
+					}
+				}
+			}
+		}
+		dayNum += 1;
+		dailyWorth.add(netWorth);
+	}
+	
+	private void attemptBuy(float price, int companyIndex, float stockMomentum)
+	{
+		if(stockMomentum >= momentum)
+		{
+			//buy some shares
+			float cashToSpend = (float) (cash * (purchaseLot / 100.0));
+			int numOfShares = (int) (cashToSpend / price);
+			cash -= (numOfShares * price);
+			purchases.add(new Purchase(numOfShares, companyIndex, price, this));
+		}
+	}
+	
+	private void makeSell(Purchase purchase)
+	{
+		numOfClosedTrades += 1;
+		float gain = (float)((purchase.getCurrentPrice() - purchase.getPurchasingPrice()) / purchase.getPurchasingPrice() * 100);
+		
+		cash += purchase.getShares() * purchase.getCurrentPrice();
+		if(gain > 0)
+			wins += 1;
+		else 
+			losses += 1;
+		
+		averageReturn = ((averageReturn * (numOfClosedTrades - 1)) + gain) / numOfClosedTrades;
 		
 	}
 }

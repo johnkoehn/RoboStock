@@ -13,7 +13,7 @@ public class BotSettings
 {
 	//ranges for each
 	public static float minMomentum;
-	public static float maxMomuntum;
+	public static float maxMomentum;
 	public static float minPurchaseLot;
 	public static float maxPurchaseLot;
 	public static float minSellPrice;
@@ -52,7 +52,7 @@ public class BotSettings
 			
 			//bad programming alert... assume file good :)
 			minMomentum = scanner.nextFloat();
-			maxMomuntum = scanner.nextFloat();
+			maxMomentum = scanner.nextFloat();
 			minPurchaseLot = scanner.nextFloat();
 			maxPurchaseLot = scanner.nextFloat();
 			minSellPrice = scanner.nextFloat();

@@ -209,7 +209,7 @@ public class Reproduction
 	{
 		while(mutators.size()>0)
 		{
-			children.add(mutators.remove(0).mutuate());
+			children.add(mutators.remove(0).mutate(r));
 		}
 	}
 }
