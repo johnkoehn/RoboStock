@@ -129,6 +129,16 @@ public class Bot
 	{
 		return maximumLoss;
 	}
+	
+	public float getNetWorth(){
+		return netWorth;
+	}
+	public double getWinLossRatio(){
+		if(losses == 0){
+			losses = 1;
+		}
+		return (double)(wins/losses);
+	}
 
 	public void setMaximumLoss(float maximumLoss)
 	{
