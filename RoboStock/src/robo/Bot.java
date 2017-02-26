@@ -484,6 +484,6 @@ public class Bot
 		avgWorth = (float) (total / dailyWorth.size());
 		dayNum = 0;
 		purchases = new LinkedList<Purchase>();
-		System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
+		//System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
 	}
 }

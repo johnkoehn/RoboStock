@@ -77,7 +77,7 @@ public class Reproduction
 		}
 
 		// step 2: stochastic selection
-		int numOfStochasticParents = (int) (parents.size() / remainderRatio);
+		int numOfStochasticParents = (int) (parents.size() / remainderRatio) - parents.size();
 
 		double totalStochasticVal = 0.0;
 		ArrayList<Double> stochasticVals = new ArrayList<Double>();
