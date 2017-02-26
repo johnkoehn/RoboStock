@@ -43,6 +43,7 @@ public class Bot
 		buys = new ArrayList<Buy>();
 		purchases = new LinkedList<Purchase>();
 		dailyWorth = new ArrayList<Float>();
+		cash = (float) BotSettings.startingCash;
 	}
 	
 	
@@ -155,7 +156,7 @@ public class Bot
 		
 		double winLossRatio=wins/losses;
 		double netWorthRatio=netWorth/600000;
-		double avgReturnRatio=averageReturn/2.5;
+		double avgReturnRatio=averageReturn/.5;
 		double avgWorthRatio=avgWorth/375000;
 		
 		return (int)(100*(netWorthWeight*netWorthRatio + winLossWeight*winLossRatio + avgReturnWeight*avgReturnRatio + avgWorthWeight*avgWorthRatio));
@@ -473,6 +474,6 @@ public class Bot
 		avgWorth = (float) (total / dailyWorth.size());
 		dayNum = 0;
 		purchases = new LinkedList<Purchase>();
-		//System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
+		System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
 	}
 }

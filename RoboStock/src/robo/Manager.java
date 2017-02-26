@@ -41,7 +41,7 @@ public class Manager
 	public void startNewGeneration()
 	{
 		//create threads
-		Thread[] threadArray = new Thread[15];
+		Thread[] threadArray = new Thread[4];
 		for(int i = 0; i < threadArray.length; i++)
 		{
 			threadArray[i] = new Thread(new ThreadSimulator(this, currentGeneration.get(i), "Thread " + i));
@@ -112,7 +112,7 @@ public class Manager
 	public static void main(String args[]) throws IOException{
 		Manager m = new Manager();
 		m.createFirstGeneration();
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 10; i++)
 		{
 			m.startNewGeneration();
 			m.createDataRender();
