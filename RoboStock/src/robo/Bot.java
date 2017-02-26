@@ -129,16 +129,6 @@ public class Bot
 	{
 		return maximumLoss;
 	}
-	
-	public float getNetWorth(){
-		return netWorth;
-	}
-	public double getWinLossRatio(){
-		if(losses == 0){
-			losses = 1;
-		}
-		return (double)(wins/losses);
-	}
 
 	public void setMaximumLoss(float maximumLoss)
 	{
@@ -293,19 +283,15 @@ public class Bot
 		return done;
 	}
 	
-	public synchronized boolean setRunning(boolean b)
+	public void setRunning(boolean b)
 	{
-		if(running)
-			return false;
 		running = b;
-		return true;
 	}
 	
 	public boolean isRunning()
 	{
 		return running;
 	}
-	
 	public void newDay(ArrayList<Day> info)
 	{
 		if(buys.isEmpty())
@@ -488,6 +474,6 @@ public class Bot
 		avgWorth = (float) (total / dailyWorth.size());
 		dayNum = 0;
 		purchases = new LinkedList<Purchase>();
-		//System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
+		System.out.println(cash + " " + averageReturn + " " + avgWorth + " " + numOfClosedTrades);
 	}
 }

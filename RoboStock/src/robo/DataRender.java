@@ -126,7 +126,7 @@ public class DataRender
 	 {
 		 int sumWinLoss = 0;
 		 for(int i = 0; i < generation.size(); i++){
-			 sumWinLoss += generation.get(i).getWinLossRatio();
+			// sumWinLoss += generation.get(i).getWinLossRatio();
 		 }
 		 winLoss.add((double)sumWinLoss/generation.size());
 	 }
@@ -135,7 +135,7 @@ public class DataRender
 	 {
 		 int sumNetWorth = 0;
 		 for(int i = 0; i < generation.size(); i++){
-			 sumNetWorth += generation.get(i).getNetWorth();
+			 //sumNetWorth += generation.get(i).getNetWorth();
 		 }
 		 netWorth.add((float)sumNetWorth/generation.size());
 	 }
