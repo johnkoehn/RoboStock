@@ -23,7 +23,8 @@ public class Bot
 	private ArrayList<Double> netWorth;
 	
 	//other
-	private boolean done = false;
+	private volatile boolean done = false;
+	private volatile boolean running = false;
 	
 	public Bot()
 	{
@@ -163,6 +164,15 @@ public class Bot
 		return done;
 	}
 	
+	public void setRunning(boolean b)
+	{
+		running = b;
+	}
+	
+	public boolean isRunning()
+	{
+		return running;
+	}
 	public void newDay(ArrayList<Day> info)
 	{
 		
